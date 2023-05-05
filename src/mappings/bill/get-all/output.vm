@@ -1,0 +1,52 @@
+#set($inputRoot = $input.path('$'))
+{
+  "page" : $inputRoot.page,
+  "pages" : $inputRoot.pages,
+  "per_page" : $inputRoot.per_page,
+  "total" : $inputRoot.total,
+  "bills" : [
+    #foreach($bill in $inputRoot.bills)
+    {
+      "date" : "$bill.date",
+      "issuer" : "$bill.issuer",
+      "amount" : $bill.amount,
+      "interventions" : [
+        #foreach($intervention in $bill.interventions)
+        {
+          "year" : $intervention.year,
+          "number" : $intervention.number,
+          "status" : "$intervention.status",
+          "description" : "$intervention.description",
+          "mileage" : $intervention.mileage,
+          "estimatedTime" : $intervention.estimatedTime",
+          "realTime" : $intervention.realTime,
+          "amount" : $intervention.amount,
+          "paidAmount" : $intervention.paidAmount,
+          "comments" : "$intervention.comments",
+          "tasks" : [
+            #foreach($task in $intervention.tasks)
+            {
+              "label" : "$task.label",
+              "steps" : [
+                #foreach($step in $task.steps)
+                {
+                  "type" : "$step.type",
+                  "description" : "$step.description",
+                  "done" : $step.done
+                } 
+                #if($foreach.hasNext),#end
+                #end
+              ]
+            } 
+            #if($foreach.hasNext),#end
+            #end
+          ]
+        } 
+        #if($foreach.hasNext),#end
+        #end
+      ]
+    } 
+    #if($foreach.hasNext),#end
+    #end
+  ]
+}

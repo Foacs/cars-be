@@ -1,0 +1,16 @@
+{
+  "$schema": "http://json-schema.org/draft-04/schema#",
+  "title": "CarInputModel",
+  "type": "object",
+  "properties": {
+    "registration": {"type": "string"},
+    "serialNumber": {"type": "string"},
+    "owner": {"type": "string"},
+    "brand": {"type": "string"},
+    "model": {"type": "string"},
+    "motorization": {"type": "string"},
+    "engineCode": {"type": "string"},
+    "releaseDate": {"type": "string"},
+    "comments": {"type": "string"}
+  }
+}

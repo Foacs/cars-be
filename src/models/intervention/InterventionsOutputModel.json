@@ -1,0 +1,69 @@
+{
+  "$schema": "http://json-schema.org/draft-04/schema#",
+  "title": "InterventionsOutputModel",
+  "type": "object",
+  "properties": {
+    "page": {"type": "integer"},
+    "pages": {"type": "integer"},
+    "per_page": {"type": "integer"},
+    "total": {"type": "integer"},
+    "interventions": {
+      "type": "array",
+      "items": {
+        "$ref": "#/definitions/Intervention"
+      }
+    }
+  },
+  "definitions": {
+    "Intervention": {
+      "type": "object",
+      "properties": {
+        "year": {"type": "integer"},
+        "number": {"type": "integer"},
+        "status": {"type": "string"},
+        "description": {"type": "string"},
+        "mileage": {"type": "integer"},
+        "estimatedTime": {"type": "number"},
+        "realTime": {"type": "number"},
+        "amount": {"type": "number"},
+        "paidAmount": {"type": "number"},
+        "comments": {"type": "string"},
+        "car": {
+          "$ref": "#/definitions/Car"
+        },
+        "tasks": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/Task"
+          }
+        }
+      }
+    },
+    "Car": {
+      "type": "object",
+      "properties": {
+        "registration": {"type": "string"}
+      }
+    },
+    "Task": {
+      "type": "object",
+      "properties": {
+        "label": {"type": "string"},
+        "steps": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/Step"
+          }
+        }
+      }
+    },
+    "Step": {
+      "type": "object",
+      "properties": {
+        "type": {"type": "string"},
+        "description": {"type": "string"},
+        "done": {"type": "integer"}
+      }
+    }
+  }
+}

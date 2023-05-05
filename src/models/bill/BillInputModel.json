@@ -1,0 +1,25 @@
+{
+  "$schema": "http://json-schema.org/draft-04/schema#",
+  "title": "BillInputModel",
+  "type": "object",
+  "properties": {
+    "date": {"type": "string"},
+    "issuer": {"type": "string"},
+    "amount": {"type": "number"},
+    "interventions": {
+      "type": "array",
+      "items": {
+        "$ref": "#/definitions/Intervention"
+      }
+    }
+  },
+  "definitions": {
+    "Intervention": {
+      "type": "object",
+      "properties": {
+        "year": {"type": "integer"},
+        "number": {"type": "integer"}
+      }
+    }
+  }
+}

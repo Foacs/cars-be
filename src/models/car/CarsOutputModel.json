@@ -1,0 +1,92 @@
+{
+  "$schema": "http://json-schema.org/draft-04/schema#",
+  "title": "CarsOutputModel",
+  "type": "object",
+  "properties": {
+    "page": {"type": "integer"},
+    "pages": {"type": "integer"},
+    "per_page": {"type": "integer"},
+    "total": {"type": "integer"},
+    "cars": {
+      "type": "array",
+      "items": {
+        "$ref": "#/definitions/Car"
+      }
+    }
+  },
+  "definitions": {
+    "Car": {
+      "type": "object",
+      "properties": {
+        "registration": {"type": "string"},
+        "serialNumber": {"type": "string"},
+        "owner": {"type": "string"},
+        "brand": {"type": "string"},
+        "model": {"type": "string"},
+        "motorization": {"type": "string"},
+        "engineCode": {"type": "string"},
+        "releaseDate": {"type": "string"},
+        "comments": {"type": "string"},
+        "pictures": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/Picture"
+          }
+        },
+        "interventions": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/Intervention"
+          }
+        }
+      }
+    },
+    "Picture": {
+      "type": "object",
+      "properties": {
+        "pictureId": {"type": "string"}
+      }
+    },
+    "Intervention": {
+      "type": "object",
+      "properties": {
+        "year": {"type": "integer"},
+        "number": {"type": "integer"},
+        "status": {"type": "string"},
+        "description": {"type": "string"},
+        "mileage": {"type": "integer"},
+        "estimatedTime": {"type": "number"},
+        "realTime": {"type": "number"},
+        "amount": {"type": "number"},
+        "paidAmount": {"type": "number"},
+        "comments": {"type": "string"},
+        "tasks": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/Task"
+          }
+        }
+      }
+    },
+    "Task": {
+      "type": "object",
+      "properties": {
+        "label": {"type": "string"},
+        "steps": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/Step"
+          }
+        }
+      }
+    },
+    "Step": {
+      "type": "object",
+      "properties": {
+        "type": {"type": "string"},
+        "description": {"type": "string"},
+        "done": {"type": "integer"}
+      }
+    }
+  }
+}

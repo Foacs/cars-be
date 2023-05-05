@@ -1,0 +1,66 @@
+#set($inputRoot = $input.path('$'))
+{
+  "page" : $inputRoot.page,
+  "pages" : $inputRoot.pages,
+  "per_page" : $inputRoot.per_page,
+  "total" : $inputRoot.total,
+  "cars" : [
+    #foreach($car in $inputRoot.cars)
+    {
+      "registration" : "$car.registration",
+      "serialNumber" : "$car.serialNumber",
+      "owner" : "$car.owner",
+      "brand" : "$car.brand",
+      "model" : "$car.model",
+      "motorization" : "$car.motorization",
+      "engineCode" : "$car.engineCode",
+      "releaseDate" : "$car.releaseDate",
+      "comments" : "$car.comments",
+      "pictures" : [
+        #foreach($picture in $car.pictures)
+        {
+          "pictureId" : "$picture.pictureId"
+        } 
+        #if($foreach.hasNext),#end
+        #end
+      ],
+      "interventions" : [
+        #foreach($intervention in $car.interventions)
+        {
+          "year" : $intervention.year,
+          "number" : $intervention.number,
+          "status" : "$intervention.status",
+          "description" : "$intervention.description",
+          "mileage" : $intervention.mileage,
+          "estimatedTime" : $intervention.estimatedTime,
+          "realTime" : $intervention.realTime,
+          "amount" : $intervention.amount,
+          "paidAmount" : $intervention.paidAmount,
+          "comments" : "$intervention.comments",
+          "tasks" : [
+            #foreach($task in $intervention.tasks)
+            {
+              "label" : "$task.label",
+              "steps" : [
+                #foreach($step in $task.steps)
+                {
+                  "type" : "$step.type",
+                  "description" : "$step.description",
+                  "done" : $step.done
+                } 
+                #if($foreach.hasNext),#end
+                #end
+              ]
+            } 
+            #if($foreach.hasNext),#end
+            #end
+          ]
+        } 
+        #if($foreach.hasNext),#end
+        #end
+      ]
+    } 
+    #if($foreach.hasNext),#end
+    #end
+  ]
+}

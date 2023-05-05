@@ -1,0 +1,45 @@
+{
+  "$schema": "http://json-schema.org/draft-04/schema#",
+  "title": "BillOutputModel",
+  "type": "object",
+  "properties": {
+    "date": {"type": "string"},
+    "issuer": {"type": "string"},
+    "amount": {"type": "number"},
+    "interventions": {
+      "type": "array",
+      "items": {
+        "$ref": "#/definitions/Intervention"
+      }
+    }
+  },
+  "definitions": {
+    "Intervention": {
+      "type": "object",
+      "properties": {
+        "year": {"type": "integer"},
+        "number": {"type": "integer"}
+      }
+    },
+    "Task": {
+      "type": "object",
+      "properties": {
+        "label": {"type": "string"},
+        "steps": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/Step"
+          }
+        }
+      }
+    },
+    "Step": {
+      "type": "object",
+      "properties": {
+        "type": {"type": "string"},
+        "description": {"type": "string"},
+        "done": {"type": "integer"}
+      }
+    }
+  }
+}

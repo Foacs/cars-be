@@ -1,0 +1,28 @@
+{
+  "$schema": "http://json-schema.org/draft-04/schema#",
+  "title": "InterventionInputModel",
+  "type": "object",
+  "properties": {
+    "year": {"type": "integer"},
+    "number": {"type": "integer"},
+    "status": {"type": "string"},
+    "description": {"type": "string"},
+    "mileage": {"type": "integer"},
+    "estimatedTime": {"type": "number"},
+    "realTime": {"type": "number"},
+    "amount": {"type": "number"},
+    "paidAmount": {"type": "number"},
+    "comments": {"type": "string"},
+    "car": {
+      "$ref": "#/definitions/Car"
+    }
+  },
+  "definitions": {
+    "Car": {
+      "type": "object",
+      "properties": {
+        "registration": {"type": "string"}
+      }
+    }
+  }
+}

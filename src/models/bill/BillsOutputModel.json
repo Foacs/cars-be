@@ -1,0 +1,74 @@
+{
+  "$schema": "http://json-schema.org/draft-04/schema#",
+  "title": "BillsOutputModel",
+  "type": "object",
+  "properties": {
+    "page": {"type": "integer"},
+    "pages": {"type": "integer"},
+    "per_page": {"type": "integer"},
+    "total": {"type": "integer"},
+    "bills": {
+      "type": "array",
+      "items": {
+        "$ref": "#/definitions/Bill"
+      }
+    }
+  },
+  "definitions": {
+    "Bill": {
+      "type": "object",
+      "properties": {
+        "date": {"type": "string"},
+        "issuer": {"type": "string"},
+        "amount": {"type": "number"},
+        "interventions": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/Intervention"
+          }
+        }
+      }
+    },
+    "Intervention": {
+      "type": "object",
+      "properties": {
+        "year": {"type": "integer"},
+        "number": {"type": "integer"},
+        "status": {"type": "string"},
+        "description": {"type": "string"},
+        "mileage": {"type": "integer"},
+        "estimatedTime": {"type": "number"},
+        "realTime": {"type": "number"},
+        "amount": {"type": "number"},
+        "paidAmount": {"type": "number"},
+        "comments": {"type": "string"},
+        "tasks": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/Task"
+          }
+        }
+      }
+    },
+    "Task": {
+      "type": "object",
+      "properties": {
+        "label": {"type": "string"},
+        "steps": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/Step"
+          }
+        }
+      }
+    },
+    "Step": {
+      "type": "object",
+      "properties": {
+        "type": {"type": "string"},
+        "description": {"type": "string"},
+        "done": {"type": "integer"}
+      }
+    }
+  }
+}
