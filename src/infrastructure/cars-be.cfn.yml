@@ -1,0 +1,61 @@
+AWSTemplateFormatVersion: 2010-09-09
+
+Parameters:
+  Env:
+    Type: String
+  Region:
+    Type: String
+  AccountId:
+    Type: String
+  DeploymentBucketName:
+    Type: String
+  UserPoolId:
+    Type: String
+
+Resources:
+  # Creates REST API, with regional endpoints, named 'cars-be'
+  RestApi:
+    Type: AWS::ApiGateway::RestApi
+    Properties:
+      EndpointConfiguration:
+        Types:
+          - REGIONAL
+      Name: cars-be
+      Description: Backend for CARS
+  # Creates a deployment and makes it depends on all REST resources
+  Deployment:
+    Type: AWS::ApiGateway::Deployment
+    DependsOn:
+      - CarResource
+    Properties:
+      RestApiId: !Ref RestApi
+  # Creates 'dev' stage
+  Stage:
+    Type: AWS::ApiGateway::Stage
+    Properties:
+      DeploymentId: !Ref Deployment
+      RestApiId: !Ref RestApi
+      StageName: dev
+  # Creates authorizer using cognito
+  CognitoAuthorizer:
+    Type: AWS::ApiGateway::Authorizer
+    Properties:
+      AuthorizerCredentials: !GetAtt ApiGatewayRole.Arn
+      IdentitySource: Authorization
+      Name: Cognito-auth
+      ProviderARNs:
+        - 'arn:aws:cognito-idp:${Region}:{$AccountId}:userpool/${UserPoolId}'
+      RestApiId: !Ref RestApi
+      Type: COGNITO_USER_POOLS
+  # Creates REST resource for cars as sub-stack from template 'cars-be-car.cfn.yml'
+  CarResource:
+    Type: AWS::CloudFormation::Stack
+    Properties:
+      TemplateURL: !Sub https://${DeploymentBucketName}.s3.${Region}.amazonaws.com/cars/cars-be-cars.cfn.yml
+      Parameters:
+        Env: !Ref Env
+        Region: !Ref Region
+        DeploymentBucketName: !Ref DeploymentBucketName
+        RestApiId: !Ref RestApi
+        RootResourceId: !GetAtt RestApi.RootResourceId
+        AuthorizerId: !Ref CognitoAuthorizer

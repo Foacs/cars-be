@@ -1,0 +1,71 @@
+AWSTemplateFormatVersion: 2010-09-09
+
+Parameters:
+  Env:
+    Type: String
+  Region:
+    Type: String
+  DeploymentBucketName:
+    Type: String
+  RestApiId:
+    Type: String
+  RootResourceId:
+    Type: String
+  AuthorizerId:
+    Type: String
+
+Resources:
+  # Creates REST resource under root for cars (/cars)
+  CarsResource:
+    Type: AWS::ApiGateway::Resource
+    Properties:
+      ParentId: !Ref RootResourceId
+      PathPart: cars
+      RestApiId: !Ref RestApiId
+  # Creates a GET method on /cars
+  CarsGetMethod:
+    Type: AWS::ApiGateway::Method
+    Properties:
+      AuthorizationType: COGNITO_USER_POOLS
+      AuthorizerId: !Ref AuthorizerId
+      HttpMethod: GET
+      Integration:
+        ConnectionType: INTERNET
+        Credentials: !GetAtt ApiGatewayRole.Arn
+        IntegrationHttpMethod: POST
+        Type: AWS
+        Uri: !Sub
+          - 'arn:aws:apigateway:${Region}:lambda:path/2015-03-31/functions/${FunctionArn}/invocations'
+          - FunctionArn: !GetAtt CarsGetFunction.Outputs.FunctionArn
+            Region: !Ref Region
+      ResourceId: !Ref CarsResource
+      RestApiId: !Ref RestApiId
+  CarsGetFunction:
+    Type: AWS::CloudFormation::Stack
+    Properties:
+      TemplateURL: !Sub https://${DeploymentBucketName}.s3.${Region}.amazonaws.com/${Env}/cars/cars-be-cars.get-lambda.cfn.yml
+      Parameters:
+        Env: !Ref Env
+        DeploymentBucketName: !Ref DeploymentBucketName
+  # Creates a role to invoke functions
+  ApiGatewayRole:
+    Type: AWS::IAM::Role
+    Properties:
+      AssumeRolePolicyDocument:
+        Version: 2012-10-17
+        Statement:
+          Effect: Allow
+          Action: sts:AssumeRole
+          Principal:
+            Service:
+              - apigateway.amazonaws.com
+      Policies:
+        - PolicyName: !Sub '${Env}-InvokeFunctionPolicy'
+          PolicyDocument:
+            Version: 2012-10-17
+            Statement:
+              - Effect: Allow
+                Action:
+                  - lambda:InvokeFunction
+                Resource:
+                  - !GetAtt CarsGetFunction.Outputs.FunctionArn

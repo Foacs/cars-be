@@ -1,0 +1,52 @@
+AWSTemplateFormatVersion: 2010-09-09
+
+Parameters:
+  Env:
+    Type: String
+  DeploymentBucketName:
+    Type: String
+
+Resources:
+  # Creates function to get all cars
+  Function:
+    Type: AWS::Lambda::Function
+    Properties:
+      Architectures:
+        - arm64
+      Code:
+        S3Bucket: !Ref DeploymentBucketName
+        S3Key: !Sub '${Env}/artifacts/cars.get.zip'
+      FunctionName: !Sub 'cars-get-all'
+      Handler: index.handler
+      Runtime: nodejs18.x
+      Role: !GetAtt FunctionRole.Arn
+  # Creates a new function's version
+  FunctionVersion:
+    Type: AWS::Lambda::Version
+    Properties:
+      FunctionName: !Ref Function
+  # Creates a function's alias
+  FunctionAlias:
+    Type: AWS::Lambda::Alias
+    Properties:
+      FunctionName: !Ref Function
+      FunctionVersion: !GetAtt version.Version
+      Name: !Ref Env
+  # Creates function's role
+  FunctionRole:
+    Type: AWS::IAM::Role
+    Properties:
+      AssumeRolePolicyDocument:
+        Version: 2012-10-17
+        Statement:
+          - Effect: Allow
+            Action: sts:AssumeRole
+            Principal:
+              Service:
+                - lambda.amazonaws.com
+      ManagedPolicyArns:
+        - arn:aws:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole
+
+Outputs:
+  FunctionArn:
+    Value: !GetAtt Function.Arn
