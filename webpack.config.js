@@ -4,7 +4,7 @@ const ProgressBarPlugin = require('progress-bar-webpack-plugin');
 const {CleanWebpackPlugin} = require('clean-webpack-plugin');
 const ZipPlugin = require('zip-webpack-plugin');
 
-const entryArray = glob.sync('./src/endpoints/**/*.mjs');
+const entryArray = glob.sync('./src/endpoints/**/!(_)*.mjs');
 
 const entryObject = entryArray.reduce((acc, item) => {
   let pathName = item.replace('./src/endpoints/', '');
@@ -33,10 +33,13 @@ module.exports = {
   resolve: {
     extensions: ['.js', '.mjs'],
   },
+  externals: /^@aws-sdk\/.+$/,
   output: {
-    filename: '[name]/index.mjs',
+    filename: '[name]/index.cjs',
+    library: {
+      type: 'commonjs',
+    },
     path: path.resolve(__dirname, 'build'),
     devtoolModuleFilenameTemplate: '[absolute-resource-path]',
-    libraryTarget: 'commonjs2',
   },
 };
