@@ -33,6 +33,11 @@ export const handler = async (event) => {
     console.error('Error: ', err);
     if (err['$metadata']?.httpStatusCode === 404) {
       return {
+        statusCode: 304,
+      };
+    }
+    if (err['$metadata']?.httpStatusCode === 404) {
+      return {
         statusCode: 404,
       };
     }
