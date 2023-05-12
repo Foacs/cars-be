@@ -1,0 +1,31 @@
+{
+  "userId": "e71bcbb6-9939-4aab-830d-fc949653d72b",
+  "id": "73ee9e72-da5f-4efb-a21b-ebe5b4ba6bc6",
+  "registration": "LW-9382",
+  "serialNumber": "5XYKT3A69DG353356",
+  "owner": "John Smith",
+  "brand": "Mercedes",
+  "model": "classe A",
+  "motorization": "diesel",
+  "engineCode": "FU832D",
+  "releaseDate": "2004-11-22",
+  "comments": "",
+  "pictures": [
+    {
+      "id": "d9948aa0-bfb0-424b-a474-ba682434fd6a",
+      "displayName": "front"
+    },
+    {
+      "id": "06d8cc36-67a1-4d63-835d-60213f8886d3",
+      "displayName": "left"
+    },
+    {
+      "id": "60c61db6-56f4-4c37-9574-8ee6bbcb3c79",
+      "displayName": "right"
+    },
+    {
+      "id": "0303fbe3-14d4-4a63-9672-909e32347ea1",
+      "displayName": "rear"
+    }
+  ]
+}

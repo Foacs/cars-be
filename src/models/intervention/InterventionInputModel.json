@@ -3,6 +3,7 @@
   "title": "InterventionInputModel",
   "type": "object",
   "properties": {
+    "id": {"type": "string"},
     "year": {"type": "integer"},
     "number": {"type": "integer"},
     "status": {"type": "string"},
@@ -13,15 +14,33 @@
     "amount": {"type": "number"},
     "paidAmount": {"type": "number"},
     "comments": {"type": "string"},
-    "car": {
-      "$ref": "#/definitions/Car"
+    "carId": {"type": "string"},
+    "tasks": {
+      "type": "array",
+      "items": {
+        "$ref": "#/definitions/Task"
+      }
     }
   },
   "definitions": {
-    "Car": {
+    "Task": {
       "type": "object",
       "properties": {
-        "registration": {"type": "string"}
+        "label": {"type": "string"},
+        "steps": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/Step"
+          }
+        }
+      }
+    },
+    "Step": {
+      "type": "object",
+      "properties": {
+        "type": {"type": "string"},
+        "description": {"type": "string"},
+        "done": {"type": "integer"}
       }
     }
   }

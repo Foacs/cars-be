@@ -1,11 +1,9 @@
-import {DynamoDBClient} from '@aws-sdk/client-dynamodb';
-import {DynamoDBDocumentClient, UpdateCommand} from '@aws-sdk/lib-dynamodb';
+import {DynamoDBClient, UpdateItemCommand} from '@aws-sdk/client-dynamodb';
 
 const client = new DynamoDBClient({region: process.env.AWS_REGION});
-const dynamo = DynamoDBDocumentClient.from(client);
-const tableName = 'cars';
+const TableName = 'cars';
 
-export const handler = async (event, context) => {
+export const handler = async (event) => {
   let body;
   let statusCode = 200;
 
@@ -16,12 +14,16 @@ export const handler = async (event, context) => {
   const requestBody = JSON.parse(event.body);
 
   try {
-    body = await dynamo.send(
-      new UpdateCommand({
-        TableName: tableName,
+    body = await client.send(
+      new UpdateItemCommand({
+        TableName,
         Key: {
-          registration: requestBody.registration,
-          userId: event.requestContext.authorizer.claims.sub,
+          userId: {
+            S: event.requestContext.authorizer.claims.sub,
+          },
+          id: {
+            S: requestBody.registration,
+          },
         },
         UpdateExpression:
           'set serialNumber = :serialNumber, #owner = :owner, brand = :brand, ' +

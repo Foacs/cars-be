@@ -18,6 +18,7 @@
     "Intervention": {
       "type": "object",
       "properties": {
+        "id": {"type": "string"},
         "year": {"type": "integer"},
         "number": {"type": "integer"},
         "status": {"type": "string"},
@@ -28,21 +29,13 @@
         "amount": {"type": "number"},
         "paidAmount": {"type": "number"},
         "comments": {"type": "string"},
-        "car": {
-          "$ref": "#/definitions/Car"
-        },
+        "carId": {"type": "string"},
         "tasks": {
           "type": "array",
           "items": {
             "$ref": "#/definitions/Task"
           }
         }
-      }
-    },
-    "Car": {
-      "type": "object",
-      "properties": {
-        "registration": {"type": "string"}
       }
     },
     "Task": {

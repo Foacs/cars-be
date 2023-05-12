@@ -28,11 +28,11 @@ In order to set up the project, you need to have https://nodejs.org[NodeJS] (ver
 > git clone https://github.com/Foacs/cars-be.git
 > cd cars-be
 ----
-. Install the dependencies with NPM
+. Install the dependencies with PNPM
 +
 [source,shell]
 ----
-cars-be> npm install
+cars-be> pnpm install
 ----
 . Build the project
 +
@@ -53,8 +53,8 @@ A `build` folder is created and it contains:
 
 https://nodejs.org[NodeJS]:: 
 _Version: `18.x`_
-https://npmjs.org[NPM]:: 
-_Version: `9.x`_
+https://pnpm.io/[PNPM]:: 
+_Version: `8.x`_
 
 https://webpack.js.org[Webpack]::
 _Version: `5.x`_

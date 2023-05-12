@@ -1,51 +1,48 @@
-import {DynamoDBClient} from '@aws-sdk/client-dynamodb';
-import {DynamoDBDocumentClient, PutCommand} from '@aws-sdk/lib-dynamodb';
+import {DynamoDBClient, PutItemCommand} from '@aws-sdk/client-dynamodb';
+import {marshall} from '@aws-sdk/util-dynamodb';
+import {v4 as uuidV4} from 'uuid';
+import etag from 'etag';
 
 const client = new DynamoDBClient({region: process.env.AWS_REGION});
-const dynamo = DynamoDBDocumentClient.from(client);
-const tableName = 'cars';
+const TableName = 'cars';
 
-export const handler = async (event, context) => {
-  let body;
-  let statusCode = 200;
-
-  const headers = {
-    'Content-Type': 'application/json',
-  };
-
-  console.log('event:', event);
+export const handler = async (event) => {
   const requestBody = JSON.parse(event.body);
 
+  const item = {
+    userId: event.requestContext.authorizer.claims.sub,
+    id: uuidV4(),
+    registration: requestBody.registration,
+    serialNumber: requestBody.serialNumber,
+    owner: requestBody.owner,
+    brand: requestBody.brand,
+    model: requestBody.model,
+    motorization: requestBody.motorization,
+    engineCode: requestBody.engineCode,
+    releaseDate: requestBody.releaseDate,
+    comments: requestBody.comments,
+  };
+
   try {
-    body = await dynamo.send(
-      new PutCommand({
-        TableName: tableName,
-        Item: {
-          registration: requestBody.registration,
-          userId: event.requestContext.authorizer.claims.sub,
-          serialNumber: requestBody.serialNumber,
-          owner: requestBody.owner,
-          brand: requestBody.brand,
-          model: requestBody.model,
-          motorization: requestBody.motorization,
-          engineCode: requestBody.engineCode,
-          releaseDate: requestBody.releaseDate,
-          comments: requestBody.comments,
-        },
+    await client.send(
+      new PutItemCommand({
+        TableName,
+        Item: marshall(item),
       }),
     );
-
-    body = `Post item ${requestBody.registration}`;
   } catch (err) {
-    statusCode = 400;
-    body = err.message;
-  } finally {
-    body = JSON.stringify(body);
+    console.error(err);
+    return {
+      statusCode: 500,
+    };
   }
 
   return {
-    statusCode,
-    body,
-    headers,
+    statusCode: 201,
+    body: JSON.stringify(item),
+    headers: {
+      'Content-Type': 'application/json',
+      ETag: etag(JSON.stringify(item)),
+    },
   };
 };

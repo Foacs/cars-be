@@ -3,6 +3,7 @@
   "title": "CarOutputModel",
   "type": "object",
   "properties": {
+    "id": {"type": "string"},
     "registration": {"type": "string"},
     "serialNumber": {"type": "string"},
     "owner": {"type": "string"},
@@ -29,48 +30,14 @@
     "Picture": {
       "type": "object",
       "properties": {
-        "pictureId": {"type": "string"}
+        "id": {"type": "string"},
+        "displayName": {"type": "string"}
       }
     },
     "Intervention": {
       "type": "object",
       "properties": {
-        "year": {"type": "integer"},
-        "number": {"type": "integer"},
-        "status": {"type": "string"},
-        "description": {"type": "string"},
-        "mileage": {"type": "integer"},
-        "estimatedTime": {"type": "number"},
-        "realTime": {"type": "number"},
-        "amount": {"type": "number"},
-        "paidAmount": {"type": "number"},
-        "comments": {"type": "string"},
-        "tasks": {
-          "type": "array",
-          "items": {
-            "$ref": "#/definitions/Task"
-          }
-        }
-      }
-    },
-    "Task": {
-      "type": "object",
-      "properties": {
-        "label": {"type": "string"},
-        "steps": {
-          "type": "array",
-          "items": {
-            "$ref": "#/definitions/Step"
-          }
-        }
-      }
-    },
-    "Step": {
-      "type": "object",
-      "properties": {
-        "type": {"type": "string"},
-        "description": {"type": "string"},
-        "done": {"type": "integer"}
+        "id": {"type": "string"}
       }
     }
   }

@@ -1,0 +1,269 @@
+[
+  {
+    "id": "70e52659-2883-4cdf-8e87-d441af950f07",
+    "year": 2022,
+    "number": 1,
+    "status": "done",
+    "description": "Front tires change",
+    "mileage": 90731,
+    "estimatedTime": 0.5,
+    "realTime": 0.6,
+    "amount": 140,
+    "paidAmount": 140,
+    "comments": "anti-theft bolt",
+    "carId": "73ee9e72-da5f-4efb-a21b-ebe5b4ba6bc6",
+    "car": {
+      "brand": "Mercedes",
+      "model": "classe A",
+      "registration": "LW-9382"
+    },
+    "bills": [
+      {
+        "id": "cf079f6b-37d2-41ba-a3e3-7fd246109712",
+        "date": "2022-01-12",
+        "issuer": "Michelin",
+        "amount": 88.0
+      },
+      {
+        "id": "61b446b5-a9f4-4481-ba5e-3b5d34831d3d",
+        "date": "2022-01-11",
+        "issuer": "Valeo",
+        "amount": 12.0
+      }
+    ],
+    "tasks": [
+      {
+        "label": "remove left wheel",
+        "steps": [
+          {
+            "description": "remove wheel",
+            "done": 1
+          },
+          {
+            "description": "remove tire",
+            "done": 1
+          },
+          {
+            "description": "remove valve",
+            "done": 1
+          },
+          {
+            "description": "install new valve",
+            "done": 1
+          },
+          {
+            "description": "install new tire",
+            "done": 1
+          },
+          {
+            "description": "fill wheel with air",
+            "done": 1
+          },
+          {
+            "description": "reinstall wheel",
+            "done": 1
+          }
+        ]
+      },
+      {
+        "label": "remove right wheel",
+        "steps": [
+          {
+            "description": "remove wheel",
+            "done": 1
+          },
+          {
+            "description": "remove tire",
+            "done": 1
+          },
+          {
+            "description": "remove valve",
+            "done": 1
+          },
+          {
+            "description": "install new valve",
+            "done": 1
+          },
+          {
+            "description": "install new tire",
+            "done": 1
+          },
+          {
+            "description": "fill wheel with air",
+            "done": 1
+          },
+          {
+            "description": "reinstall wheel",
+            "done": 1
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "id": "363dd9bd-91f2-4367-b31a-355df0f72015",
+    "year": 2022,
+    "number": 2,
+    "status": "done",
+    "description": "Oil/filter change + air filter change",
+    "mileage": 97837,
+    "estimatedTime": 1.0,
+    "realTime": 0.9,
+    "amount": 63.0,
+    "paidAmount": 63.0,
+    "comments": "",
+    "car": {
+      "id": "73ee9e72-da5f-4efb-a21b-ebe5b4ba6bc6",
+      "brand": "Mercedes",
+      "model": "classe A",
+      "registration": "LW-9382"
+    },
+    "bills": [
+      {
+        "id": "6e69f1dc-fb87-4c04-a08e-6c2e27588c93",
+        "date": "2022-03-29",
+        "issuer": "Mobil",
+        "amount": 19.92
+      },
+      {
+        "id": "75611f76-cf00-4219-8ad1-66536897a619",
+        "date": "2022-03-30",
+        "issuer": "mercedes",
+        "amount": 0.98
+      },
+      {
+        "id": "fe29f710-0195-4f4f-9c23-fecf614463c6",
+        "date": "2022-04-03",
+        "issuer": "valeo",
+        "amount": 7.36
+      }
+    ],
+    "tasks": [
+      {
+        "label": "remove oil",
+        "steps": [
+          {
+            "description": "heat engine",
+            "done": 1
+          },
+          {
+            "description": "remove drain screw",
+            "done": 1
+          },
+          {
+            "description": "replace drain screw joint",
+            "done": 1
+          },
+          {
+            "description": "remove filter",
+            "done": 1
+          },
+          {
+            "description": "install new filter",
+            "done": 1
+          },
+          {
+            "description": "refill oil",
+            "done": 1
+          }
+        ]
+      },
+      {
+        "label": "replace air filter",
+        "steps": [
+          {
+            "description": "remove air filter",
+            "done": 1
+          },
+          {
+            "description": "install new air filter",
+            "done": 1
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "id": "17d3ee4f-2d5c-4f5a-ae8c-ab2e5d145ed7",
+    "year": 2023,
+    "number": 2,
+    "status": "in progress",
+    "description": "Oil/filter change + air filter change",
+    "mileage": 102865,
+    "estimatedTime": 1.0,
+    "realTime": 1.2,
+    "amount": 65.0,
+    "paidAmount": 0.0,
+    "comments": "",
+    "car": {
+      "id": "73ee9e72-da5f-4efb-a21b-ebe5b4ba6bc6",
+      "brand": "Mercedes",
+      "model": "classe A",
+      "registration": "LW-9382"
+    },
+    "bills": [
+      {
+        "id": "3b7ea57a-fde6-42bf-88f5-b815e10cb7ee",
+        "date": "2023-04-05",
+        "issuer": "Mobil",
+        "amount": 22.63
+      },
+      {
+        "id": "109f0291-5c66-4161-9401-e90b0969b307",
+        "date": "2023-04-05",
+        "issuer": "mercedes",
+        "amount": 1.16
+      },
+      {
+        "id": "4b671187-5c07-4ef3-adf5-d5e1c13de239",
+        "date": "2023-04-07",
+        "issuer": "valeo",
+        "amount": 9.82
+      }
+    ],
+    "tasks": [
+      {
+        "label": "remove oil",
+        "steps": [
+          {
+            "description": "heat engine",
+            "done": 1
+          },
+          {
+            "description": "remove drain screw",
+            "done": 1
+          },
+          {
+            "description": "replace drain screw joint",
+            "done": 0
+          },
+          {
+            "description": "remove filter",
+            "done": 1
+          },
+          {
+            "description": "install new filter",
+            "done": 0
+          },
+          {
+            "description": "refill oil",
+            "done": 0
+          }
+        ]
+      },
+      {
+        "label": "replace air filter",
+        "steps": [
+          {
+            "description": "remove air filter",
+            "done": 1
+          },
+          {
+            "description": "install new air filter",
+            "done": 0
+          }
+        ]
+      }
+    ]
+  }
+]

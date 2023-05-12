@@ -1,40 +1,36 @@
-import {DynamoDBClient} from '@aws-sdk/client-dynamodb';
-import {DynamoDBDocumentClient, DeleteCommand} from '@aws-sdk/lib-dynamodb';
+import {DynamoDBClient, DeleteItemCommand} from '@aws-sdk/client-dynamodb';
+import {marshall} from '@aws-sdk/util-dynamodb';
 
 const client = new DynamoDBClient({region: process.env.AWS_REGION});
-const dynamo = DynamoDBDocumentClient.from(client);
-const tableName = 'cars';
 
-export const handler = async (event, context) => {
-  let body;
-  let statusCode = 200;
-
-  const headers = {
-    'Content-Type': 'application/json',
-  };
+export const handler = async (event) => {
+  let statusCode = 204;
 
   try {
-    body = await dynamo.send(
-      new DeleteCommand({
-        TableName: tableName,
-        Key: {
-          registration: event.pathParameters.carId,
+    await client.send(
+      new DeleteItemCommand({
+        TableName: 'cars',
+        Key: marshall({
           userId: event.requestContext.authorizer.claims.sub,
-        },
+          id: event.pathParameters.carId,
+        }),
       }),
     );
 
-    body = `Delete item ${event.pathParameters.carId}`;
+    await client.send(
+      new DeleteItemCommand({
+        TableName: 'interventions',
+        Key: marshall({
+          carId: event.pathParameters.carId,
+        }),
+      }),
+    );
   } catch (err) {
-    statusCode = 400;
-    body = err.message;
-  } finally {
-    body = JSON.stringify(body);
+    console.error(err);
+    statusCode = 500;
   }
 
   return {
     statusCode,
-    body,
-    headers,
   };
 };
