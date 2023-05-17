@@ -112,8 +112,8 @@
     "amount": 63.0,
     "paidAmount": 63.0,
     "comments": "",
+    "carId": "73ee9e72-da5f-4efb-a21b-ebe5b4ba6bc6",
     "car": {
-      "id": "73ee9e72-da5f-4efb-a21b-ebe5b4ba6bc6",
       "brand": "Mercedes",
       "model": "classe A",
       "registration": "LW-9382"
@@ -195,8 +195,8 @@
     "amount": 65.0,
     "paidAmount": 0.0,
     "comments": "",
+    "carId": "73ee9e72-da5f-4efb-a21b-ebe5b4ba6bc6",
     "car": {
-      "id": "73ee9e72-da5f-4efb-a21b-ebe5b4ba6bc6",
       "brand": "Mercedes",
       "model": "classe A",
       "registration": "LW-9382"

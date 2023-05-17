@@ -30,12 +30,23 @@
         "paidAmount": {"type": "number"},
         "comments": {"type": "string"},
         "carId": {"type": "string"},
+        "car": {
+          "$ref": "#/definitions/Car"
+        },
         "tasks": {
           "type": "array",
           "items": {
             "$ref": "#/definitions/Task"
           }
         }
+      }
+    },
+    "Car": {
+      "type": "object",
+      "properties": {
+        "brand": {"type": "string"},
+        "model": {"type": "string"},
+        "registration": {"type": "string"}
       }
     },
     "Task": {

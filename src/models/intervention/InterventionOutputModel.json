@@ -15,6 +15,9 @@
     "paidAmount": {"type": "number"},
     "comments": {"type": "string"},
     "carId": {"type": "string"},
+    "car": {
+      "$ref": "#/definitions/Car"
+    },
     "tasks": {
       "type": "array",
       "items": {
@@ -23,6 +26,14 @@
     }
   },
   "definitions": {
+    "Car": {
+      "type": "object",
+      "properties": {
+        "brand": {"type": "string"},
+        "model": {"type": "string"},
+        "registration": {"type": "string"}
+      }
+    },
     "Task": {
       "type": "object",
       "properties": {

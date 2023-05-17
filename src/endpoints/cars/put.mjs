@@ -1,61 +1,51 @@
-import {DynamoDBClient, UpdateItemCommand} from '@aws-sdk/client-dynamodb';
-
-const client = new DynamoDBClient({region: process.env.AWS_REGION});
-const TableName = 'cars';
+import {
+  getCurrentETag,
+  updateCar,
+} from '../../lib/repository/CarRepository.mjs';
 
 export const handler = async (event) => {
-  let body;
-  let statusCode = 200;
-
-  const headers = {
-    'Content-Type': 'application/json',
-  };
-
   const requestBody = JSON.parse(event.body);
+  const previousETag = event.headers['If-Match'];
 
-  try {
-    body = await client.send(
-      new UpdateItemCommand({
-        TableName,
-        Key: {
-          userId: {
-            S: event.requestContext.authorizer.claims.sub,
-          },
-          id: {
-            S: requestBody.registration,
-          },
-        },
-        UpdateExpression:
-          'set serialNumber = :serialNumber, #owner = :owner, brand = :brand, ' +
-          'model = :model, motorization = :motorization, engineCode = :engineCode, ' +
-          'releaseDate = :releaseDate, comments = :comments',
-        ExpressionAttributeValues: {
-          ':serialNumber': requestBody.serialNumber,
-          ':owner': requestBody.owner,
-          ':brand': requestBody.brand,
-          ':model': requestBody.model,
-          ':motorization': requestBody.motorization,
-          ':engineCode': requestBody.engineCode,
-          ':releaseDate': requestBody.releaseDate,
-          ':comments': requestBody.comments,
-        },
-        ExpressionAttributeNames: {
-          '#owner': 'owner',
-        },
+  // Validation
+  if (!requestBody.id) {
+    return {
+      statusCode: 400,
+      body: JSON.stringify({
+        message: 'No ID provided',
       }),
-    );
-
-    body = `Put item ${requestBody.registration}`;
-  } catch (err) {
-    statusCode = 400;
-    body = err.message;
-  } finally {
-    body = JSON.stringify(body);
+    };
   }
 
-  return {
-    statusCode,
-    body,
-    headers,
-  };
+  try {
+    if (previousETag) {
+      const ETag = await getCurrentETag(
+        event.requestContext.authorizer.claims.sub,
+        requestBody.id,
+      );
+
+      if (previousETag !== ETag) {
+        console.log('previous ETag ', previousETag, ' current ETag ', ETag);
+        return {
+          statusCode: 412,
+        };
+      }
+    }
+
+    console.log('Update car with ID ', requestBody.id);
+    const {ETag: newETag} = await updateCar({
+      ...requestBody,
+      userId: event.requestContext.authorizer.claims.sub,
+      id: requestBody.id,
+    });
+
+    return {
+      statusCode: 204,
+      headers: {
+        ETag: newETag,
+      },
+    };
+  } catch (err) {
+    return err;
+  }
 };

@@ -18,12 +18,6 @@
       "items": {
         "$ref": "#/definitions/Picture"
       }
-    },
-    "interventions": {
-      "type": "array",
-      "items": {
-        "$ref": "#/definitions/Intervention"
-      }
     }
   },
   "definitions": {
@@ -32,12 +26,6 @@
       "properties": {
         "id": {"type": "string"},
         "displayName": {"type": "string"}
-      }
-    },
-    "Intervention": {
-      "type": "object",
-      "properties": {
-        "id": {"type": "string"}
       }
     }
   }
