@@ -65,10 +65,10 @@ export const findCarById = async (id) => {
     console.log('No car found for ID ', id);
     throw {statusCode: 404};
   }
+
   const item = JSON.stringify(transformCar(unmarshall(dynamoResponse.Item)));
   const ETag = etag(item);
 
-  console.log('ETag ', ETag);
   return {
     item,
     ETag,
@@ -82,7 +82,7 @@ export const findCarById = async (id) => {
  * @param {int} size page size
  * @returns the found cars
  */
-export const findAllCar = async (page, size) => {
+export const findAllCars = async (page, size) => {
   try {
     let cars = [];
     let LastEvaluatedKey;
@@ -184,7 +184,6 @@ export const updateCar = async (car) => {
       ReturnValues: 'ALL_NEW',
       ...updateExpression(car),
     };
-    console.log('updateExpression ', expressions);
     const dynamoResponse = await client.send(
       new UpdateItemCommand(expressions),
     );
