@@ -18,6 +18,7 @@
     "Intervention": {
       "type": "object",
       "properties": {
+        "id": {"type": "string"},
         "year": {"type": "integer"},
         "number": {"type": "integer"},
         "status": {"type": "string"},
@@ -28,6 +29,7 @@
         "amount": {"type": "number"},
         "paidAmount": {"type": "number"},
         "comments": {"type": "string"},
+        "carId": {"type": "string"},
         "car": {
           "$ref": "#/definitions/Car"
         },
@@ -42,6 +44,8 @@
     "Car": {
       "type": "object",
       "properties": {
+        "brand": {"type": "string"},
+        "model": {"type": "string"},
         "registration": {"type": "string"}
       }
     },

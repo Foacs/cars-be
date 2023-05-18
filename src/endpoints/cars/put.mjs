@@ -1,59 +1,53 @@
-import {DynamoDBClient} from '@aws-sdk/client-dynamodb';
-import {DynamoDBDocumentClient, UpdateCommand} from '@aws-sdk/lib-dynamodb';
+import {
+  findCurrentETag,
+  updateCar,
+} from '../../lib/repository/CarRepository.mjs';
 
-const client = new DynamoDBClient({region: process.env.AWS_REGION});
-const dynamo = DynamoDBDocumentClient.from(client);
-const tableName = 'cars';
-
-export const handler = async (event, context) => {
-  let body;
-  let statusCode = 200;
-
-  const headers = {
-    'Content-Type': 'application/json',
-  };
-
+export const handler = async (event) => {
   const requestBody = JSON.parse(event.body);
+  const previousETag = event.headers['If-Match'];
 
-  try {
-    body = await dynamo.send(
-      new UpdateCommand({
-        TableName: tableName,
-        Key: {
-          registration: requestBody.registration,
-          userId: event.requestContext.authorizer.claims.sub,
-        },
-        UpdateExpression:
-          'set serialNumber = :serialNumber, #owner = :owner, brand = :brand, ' +
-          'model = :model, motorization = :motorization, engineCode = :engineCode, ' +
-          'releaseDate = :releaseDate, comments = :comments',
-        ExpressionAttributeValues: {
-          ':serialNumber': requestBody.serialNumber,
-          ':owner': requestBody.owner,
-          ':brand': requestBody.brand,
-          ':model': requestBody.model,
-          ':motorization': requestBody.motorization,
-          ':engineCode': requestBody.engineCode,
-          ':releaseDate': requestBody.releaseDate,
-          ':comments': requestBody.comments,
-        },
-        ExpressionAttributeNames: {
-          '#owner': 'owner',
-        },
+  // Validation
+  if (!requestBody.id) {
+    return {
+      statusCode: 400,
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        message: 'Missing required body property: id',
       }),
-    );
-
-    body = `Put item ${requestBody.registration}`;
-  } catch (err) {
-    statusCode = 400;
-    body = err.message;
-  } finally {
-    body = JSON.stringify(body);
+    };
   }
 
-  return {
-    statusCode,
-    body,
-    headers,
-  };
+  try {
+    if (previousETag) {
+      const ETag = await findCurrentETag(
+        event.requestContext.authorizer.claims.sub,
+        requestBody.id,
+      );
+
+      if (previousETag !== ETag) {
+        console.log('previous ETag ', previousETag, ' current ETag ', ETag);
+        return {
+          statusCode: 412,
+        };
+      }
+    }
+
+    console.log('Update car with ID ', requestBody.id);
+    const {ETag: newETag} = await updateCar(
+      event.requestContext.authorizer.claims.sub,
+      requestBody,
+    );
+
+    return {
+      statusCode: 204,
+      headers: {
+        ETag: newETag,
+      },
+    };
+  } catch (err) {
+    return err;
+  }
 };

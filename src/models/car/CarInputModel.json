@@ -3,6 +3,7 @@
   "title": "CarInputModel",
   "type": "object",
   "properties": {
+    "id": {"type": "string"},
     "registration": {"type": "string"},
     "serialNumber": {"type": "string"},
     "owner": {"type": "string"},

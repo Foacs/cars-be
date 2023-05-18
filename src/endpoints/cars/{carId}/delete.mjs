@@ -1,40 +1,15 @@
-import {DynamoDBClient} from '@aws-sdk/client-dynamodb';
-import {DynamoDBDocumentClient, DeleteCommand} from '@aws-sdk/lib-dynamodb';
+import {deleteCar} from '../../../lib/repository/CarRepository.mjs';
 
-const client = new DynamoDBClient({region: process.env.AWS_REGION});
-const dynamo = DynamoDBDocumentClient.from(client);
-const tableName = 'cars';
-
-export const handler = async (event, context) => {
-  let body;
-  let statusCode = 200;
-
-  const headers = {
-    'Content-Type': 'application/json',
-  };
-
+export const handler = async (event) => {
   try {
-    body = await dynamo.send(
-      new DeleteCommand({
-        TableName: tableName,
-        Key: {
-          registration: event.pathParameters.carId,
-          userId: event.requestContext.authorizer.claims.sub,
-        },
-      }),
+    await deleteCar(
+      event.requestContext.authorizer.claims.sub,
+      event.pathParameters.carId,
     );
-
-    body = `Delete item ${event.pathParameters.carId}`;
+    return {
+      statusCode: 204,
+    };
   } catch (err) {
-    statusCode = 400;
-    body = err.message;
-  } finally {
-    body = JSON.stringify(body);
+    return err;
   }
-
-  return {
-    statusCode,
-    body,
-    headers,
-  };
 };

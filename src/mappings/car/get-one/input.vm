@@ -1,7 +1,0 @@
-#set($inputRoot = $input.path('$'))
-{
-  "userId": "$context.authorizer.claims.sub",
-  "pathParameters": {
-    "carId": "$input.params().path.get('carId')"
-  }
-}

@@ -1,4 +1,0 @@
-#set($inputRoot = $input.path('$'))
-{
-  "userId": "$context.authorizer.claims.sub"
-}

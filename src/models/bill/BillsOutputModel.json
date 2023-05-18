@@ -18,6 +18,7 @@
     "Bill": {
       "type": "object",
       "properties": {
+        "id": {"type": "string"},
         "date": {"type": "string"},
         "issuer": {"type": "string"},
         "amount": {"type": "number"},
