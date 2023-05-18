@@ -1,5 +1,5 @@
 import {
-  getCurrentETag,
+  findCurrentETag,
   updateCar,
 } from '../../lib/repository/CarRepository.mjs';
 
@@ -11,15 +11,18 @@ export const handler = async (event) => {
   if (!requestBody.id) {
     return {
       statusCode: 400,
+      headers: {
+        'Content-Type': 'application/json',
+      },
       body: JSON.stringify({
-        message: 'No ID provided',
+        message: 'Missing required body property: id',
       }),
     };
   }
 
   try {
     if (previousETag) {
-      const ETag = await getCurrentETag(
+      const ETag = await findCurrentETag(
         event.requestContext.authorizer.claims.sub,
         requestBody.id,
       );
@@ -33,11 +36,10 @@ export const handler = async (event) => {
     }
 
     console.log('Update car with ID ', requestBody.id);
-    const {ETag: newETag} = await updateCar({
-      ...requestBody,
-      userId: event.requestContext.authorizer.claims.sub,
-      id: requestBody.id,
-    });
+    const {ETag: newETag} = await updateCar(
+      event.requestContext.authorizer.claims.sub,
+      requestBody,
+    );
 
     return {
       statusCode: 204,

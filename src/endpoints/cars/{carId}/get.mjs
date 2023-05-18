@@ -1,10 +1,10 @@
-import {getCar} from '../../../lib/repository/CarRepository.mjs';
+import {findCarById} from '../../../lib/repository/CarRepository.mjs';
 
 export const handler = async (event) => {
   const previousETag = event.headers['If-None-Match'];
 
   try {
-    const {item, ETag} = await getCar(
+    const {item, ETag} = await findCarById(
       event.requestContext.authorizer.claims.sub,
       event.pathParameters.carId,
     );
@@ -17,12 +17,11 @@ export const handler = async (event) => {
 
     return {
       statusCode: 200,
-      body: item,
       headers: {
         'Content-Type': 'application/json',
-        Test: '200-A',
         ETag,
       },
+      body: item,
     };
   } catch (err) {
     return err;

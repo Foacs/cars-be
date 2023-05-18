@@ -9,7 +9,6 @@ import {
   ScanCommand,
 } from '@aws-sdk/client-dynamodb';
 import {marshall, unmarshall} from '@aws-sdk/util-dynamodb';
-import {v4 as uuidV4} from 'uuid';
 import etag from 'etag';
 import {
   ExpressionAttributes,
@@ -19,32 +18,38 @@ import {
 const client = new DynamoDBClient({region: process.env.AWS_REGION});
 const TableName = 'cars';
 
-export const getCar = async (userId, id) => {
+/**
+ * Transforms a car from dynamoDB results (removes PK and SK).
+ *
+ * @param {Car} car the car to transform
+ * @returns the transformed car
+ */
+const transformCar = (car) => {
+  car.id = car.PK.split('#')[1];
+  delete car.PK;
+  delete car.SK;
+  return car;
+};
+
+/**
+ * Finds a car from its ID.
+ *
+ * @param {String} id the car ID
+ * @returns the found car
+ */
+export const findCarById = async (id) => {
+  let dynamoResponse;
   try {
     console.log('Get car with ID ', id);
-    const dynamoResponse = await client.send(
+    dynamoResponse = await client.send(
       new GetItemCommand({
         TableName,
         Key: marshall({
-          userId,
-          id,
+          PK: `CAR#${id}`,
+          SK: `#METADATA#${id}`,
         }),
       }),
     );
-
-    if (!dynamoResponse.Item) {
-      console.log('No car found for ID ', id, ' and userId ', userId);
-      throw {statusCode: 404};
-    }
-
-    const item = JSON.stringify(unmarshall(dynamoResponse.Item));
-    const ETag = etag(item);
-
-    console.log('ETag ', ETag);
-    return {
-      item,
-      ETag,
-    };
   } catch (err) {
     console.error(err);
     if (
@@ -55,41 +60,62 @@ export const getCar = async (userId, id) => {
     }
     throw {statusCode: 400, body: err.message};
   }
+
+  if (!dynamoResponse || !dynamoResponse.Item) {
+    console.log('No car found for ID ', id);
+    throw {statusCode: 404};
+  }
+  const item = JSON.stringify(transformCar(unmarshall(dynamoResponse.Item)));
+  const ETag = etag(item);
+
+  console.log('ETag ', ETag);
+  return {
+    item,
+    ETag,
+  };
 };
 
-export const getAllCar = async (userId, page, size) => {
+/**
+ * Finds all cars.
+ *
+ * @param {int} page page number
+ * @param {int} size page size
+ * @returns the found cars
+ */
+export const findAllCar = async (page, size) => {
   try {
-    console.log('Get all cars for user ', userId);
-
     let cars = [];
     let LastEvaluatedKey;
-
+    let total = 0;
+    let dynamoResponse;
     do {
-      const dynamoResponse = await client.send(
+      dynamoResponse = await client.send(
         new ScanCommand({
           TableName,
-          Limit: size,
           ExclusiveStartKey: LastEvaluatedKey,
-          FilterExpression: 'userId = :userId',
+          FilterExpression: 'begins_with(SK, :sk)',
           ExpressionAttributeValues: {
-            ':userId': {
-              S: userId,
-            },
+            ':sk': {S: '#METADATA#'},
           },
         }),
       );
 
       cars = [...cars, ...dynamoResponse.Items];
       LastEvaluatedKey = dynamoResponse.LastEvaluatedKey;
+      total += dynamoResponse.Count;
     } while (dynamoResponse.LastEvaluatedKey);
 
-    const item = JSON.stringify(unmarshall(dynamoResponse.Item));
-    const ETag = etag(item);
+    const offset = (page - 1) * size;
+    const pages = Math.ceil(total / size);
 
-    console.log('ETag ', ETag);
     return {
-      item,
-      ETag,
+      page,
+      pages,
+      size,
+      total,
+      cars: cars
+        .slice(offset, offset + size)
+        .map((item) => transformCar(unmarshall(item))),
     };
   } catch (err) {
     console.error(err);
@@ -103,11 +129,23 @@ export const getAllCar = async (userId, page, size) => {
   }
 };
 
-export const getCurrentETag = async (userId, id) => {
-  const {ETag} = await getCar(userId, id);
+/**
+ * Finds the current car's ETag from the car's ID.
+ *
+ * @param {String} id the car ID
+ * @returns the car's ETag
+ */
+export const findCurrentETag = async (id) => {
+  const {ETag} = await getCar(id);
   return ETag;
 };
 
+/**
+ * Gets update expression to update a car.
+ *
+ * @param {Car} car the car to update
+ * @returns the update expression
+ */
 const updateExpression = (car) => {
   let attributes = new ExpressionAttributes();
   let expression = new UpdateExpression();
@@ -129,13 +167,19 @@ const updateExpression = (car) => {
   };
 };
 
+/**
+ * Updates a car.
+ *
+ * @param {Car} car the car to update
+ * @returns the updated car
+ */
 export const updateCar = async (car) => {
   try {
     const expressions = {
       TableName,
       Key: marshall({
-        userId: car.userId,
-        id: car.id,
+        PK: `CAR#${car.id}`,
+        SK: `#METADATA#${car.id}`,
       }),
       ReturnValues: 'ALL_NEW',
       ...updateExpression(car),
@@ -145,7 +189,9 @@ export const updateCar = async (car) => {
       new UpdateItemCommand(expressions),
     );
 
-    const item = JSON.stringify(unmarshall(dynamoResponse.Attributes));
+    const item = JSON.stringify(
+      transformCar(unmarshall(dynamoResponse.Attributes)),
+    );
     const ETag = etag(item);
 
     return {
@@ -160,12 +206,19 @@ export const updateCar = async (car) => {
   }
 };
 
-export const createCar = async (userId, car) => {
+/**
+ * Creates a car.
+ *
+ * @param {Car} car the car to create
+ * @returns the created car
+ */
+export const createCar = async (car) => {
   try {
+    const id = Date.now();
     const Item = marshall({
       ...car,
-      id: uuidV4(),
-      userId: userId,
+      PK: `CAR#${id}`,
+      SK: `#METADATA#${id}`,
     });
 
     await client.send(
@@ -175,7 +228,7 @@ export const createCar = async (userId, car) => {
       }),
     );
 
-    const item = JSON.stringify(unmarshall(Item));
+    const item = JSON.stringify(transformCar(unmarshall(Item)));
     const ETag = etag(item);
 
     return {
@@ -190,23 +243,18 @@ export const createCar = async (userId, car) => {
   }
 };
 
-export const deleteCar = async (userId, id) => {
+/**
+ * Deletes a car.
+ *
+ * @param {String} id the car's ID
+ */
+export const deleteCar = async (id) => {
   try {
     await client.send(
       new DeleteItemCommand({
         TableName: 'cars',
         Key: marshall({
-          userId,
-          id,
-        }),
-      }),
-    );
-
-    await client.send(
-      new DeleteItemCommand({
-        TableName: 'interventions',
-        Key: marshall({
-          carId: id,
+          PK: `CAR#${id}`,
         }),
       }),
     );

@@ -2,7 +2,7 @@ import {deleteCar} from '../../../lib/repository/CarRepository.mjs';
 
 export const handler = async (event) => {
   try {
-    deleteCar(
+    await deleteCar(
       event.requestContext.authorizer.claims.sub,
       event.pathParameters.carId,
     );

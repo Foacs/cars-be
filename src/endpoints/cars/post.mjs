@@ -4,10 +4,7 @@ export const handler = async (event) => {
   const requestBody = JSON.parse(event.body);
 
   try {
-    const {item, ETag} = await createCar(
-      event.requestContext.authorizer.claims.sub,
-      requestBody,
-    );
+    const {item, ETag} = await createCar(requestBody);
     return {
       statusCode: 201,
       body: item,
