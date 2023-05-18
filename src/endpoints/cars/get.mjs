@@ -12,7 +12,7 @@ export const handler = async (event) => {
         'Content-Type': 'application/json',
       },
       body: JSON.stringify({
-        message: 'Page number and/or page size should be a positive integer',
+        message: 'Page number and page size must be positive integers',
       }),
     };
   }
