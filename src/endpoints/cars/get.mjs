@@ -5,7 +5,7 @@ export const handler = async (event) => {
   const size = event.queryStringParameters.size;
 
   // Validation
-  if (isNaN(page) || isNaN(size)) {
+  if (isNaN(page) || isNaN(size) || page < 0 || size <= 0) {
     return {
       statusCode: 400,
       headers: {
