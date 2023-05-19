@@ -1,0 +1,489 @@
+= Types
+:toc: macro
+
+toc::[]
+
+== Entities
+
+This section describes the different kinds of entities will be managed by the application.
+
+*_Note:_* _In the following sections, a field in italic means it is a reference to a parent entity hence, it has no
+label._
+
+=== Car
+
+This is the representation of a car; the entry point entity of the application.
+
+Identified by its registration number, it can have an avatar and <<Intervention,interventions>> can be planned on it.
+
+[cols="8,12,1,1,1,1"]
+|===
+|Field|Label|Type|Cardinality|Unique|Default
+
+|registrationZone
+|Zone géographique
+|<<GeographicalArea>>
+|1..1
+|true^1^
+|
+
+|registrationNumber
+|Numéro d'immatriculation
+|String
+|1..1
+|true^1^
+|
+
+|serialNumber
+|VIN
+|String
+|0..1
+|true
+|
+
+|owner
+|Propriétaire
+|String
+|1..1
+|
+|
+
+|brand
+|Marque
+|String
+|0..1
+|
+|
+
+|model
+|Modèle
+|String
+|0..1
+|
+|
+
+|motorization
+|Motorisation
+|String
+|0..1
+|
+|
+
+|energySources
+|Sources d'énergie
+|<<EnergySource>>
+|0..n
+|
+|
+
+|engineCode
+|Code moteur
+|String
+|0..1
+|
+|
+
+|releaseDate
+|Date de mise en circulation
+|String
+|0..1
+|
+|
+
+|lastControlDate
+|Date du dernier contrôle technique
+|Date
+|0..1
+|
+|
+
+|comments
+|Commentaires
+|String
+|0..1
+|
+|
+
+|certificate
+|Carte grise
+|File
+|0..1
+|
+|
+
+|avatar
+|Avatar
+|File
+|0..1
+|
+|
+
+|pictures
+|Images
+|File
+|0..n
+|
+|
+
+|interventions
+|Interventions
+|<<Intervention>>
+|0..n
+|
+|
+|===
+
+^1^ _The registration zone and number should define a composite unique key; a registration number needs only to be
+unique per geographical area._
+
+=== Intervention
+
+An intervention is an operation that needs to be done on a <<Car,car>>; it is billable, and might have a target date.
+
+It is described by a title and a <<InterventionStatus,status>>, and is composed of multiple <<Task,tasks>>.
+
+[cols="8,12,1,1,1,1"]
+|===
+|Field|Label|Type|Cardinality|Unique|Default
+
+|title
+|Intitulé
+|String
+|1..1
+|
+|
+
+|status
+|Status
+|<<InterventionStatus>>
+|1..1
+|
+|
+
+|targetDate
+|Date cible
+|Date
+|0..1
+|
+|
+
+|mileage
+|Kilométrage
+|Decimal
+|0..1
+|
+|
+
+|estimatedTime
+|Temps estimé
+|Decimal
+|0..1
+|
+|
+
+|consumedTime
+|Temps consommé
+|Decimal
+|1..1
+|
+|0
+
+|paidAmount
+|Paiements reçus
+|Decimal
+|1..1
+|
+|0
+
+|laborCost
+|Coût de la main d'œuvre
+|Decimal
+|0..1
+|
+|
+
+|discount
+|Remise
+|Decimal
+|0..1
+|
+|
+
+|comments
+|Commentaires
+|String
+|0..1
+|
+|
+
+|tasks
+|Tâches
+|<<Task>>
+|0..n
+|
+|
+
+|_car_
+|
+|_<<Car>>_
+|_1..1_
+|
+|
+|===
+
+=== Task
+
+A task is (as its name stands) a task to be done as part of an <<Intervention,intervention>>.
+
+It is only described by a title and is composed of multiple <<Step,steps>>.
+
+[cols="8,12,1,1,1,1"]
+|===
+|Field|Label|Type|Cardinality|Unique|Default
+
+|title
+|Intitulé
+|String
+|1..1
+|
+|
+
+|steps
+|Étapes
+|<<Task>>
+|0..n
+|
+|
+
+|_intervention_
+|
+|_<<Intervention>>_
+|_1..1_
+|
+|
+|===
+
+=== Step
+
+A step is (as its name stands) a step to be done as part of a <<Task,task>>.
+
+It is only described by a <<StepType,type>> and a description, and has a simple status: it is either done or not.
+
+[cols="8,12,1,1,1,1"]
+|===
+|Field|Label|Type|Cardinality|Unique|Default
+
+|type
+|Type
+|String
+|1..1
+|
+|
+
+|description
+|Description
+|String
+|1..1
+|
+|
+
+|done
+|Effectué
+|Boolean
+|1..1
+|
+|false
+
+|_task_
+|
+|_<<Task>>_
+|_1..1_
+|
+|
+|===
+
+=== Order
+
+An order is the representation of an order the user has issued to a supplier, which needs to be traced in order to bill
+the client.
+
+It is described by a reference, an issue date and a supplier, can have multiple files attached to it and multiple
+<<OrderPart,parts>> can be created from it.
+
+[cols="8,12,1,1,1,1"]
+|===
+|Field|Label|Type|Cardinality|Unique|Default
+
+|reference
+|Référence
+|String
+|1..1
+|true
+|
+
+|issueDate
+|Date d'émission
+|Date
+|1..1
+|
+|
+
+|supplier
+|Fournisseur
+|String
+|1..1
+|
+|
+
+|files
+|Fichiers
+|File
+|0..n
+|
+|
+
+|parts
+|Pièces
+|<<OrderPart>>
+|0..n
+|
+|
+|===
+
+=== OrderPart
+
+An order part is a part of an <<Order,order>> that needs to be linked to an <<Intervention,intervention>>.
+
+Is it described by a designation, a price and whether the part has been received or not.
+
+It is then used to trace which parts of an <<Order,order>> have been issued for which <<Intervention,intervention>>, in
+order to bill the client.
+
+[cols="8,12,1,1,1,1"]
+|===
+|Field|Label|Type|Cardinality|Unique|Default
+
+|designation
+|Désignation
+|String
+|1..1
+|true
+|
+
+|price
+|Prix
+|Decimal
+|1..1
+|
+|
+
+|received
+|Reçu
+|Boolean
+|1..1
+|
+|0
+
+|_intervention_
+|
+|_<<Intervention>>_
+|_1..1_
+|
+|
+|===
+
+== Codifications
+
+This section describes the different kinds of codifications that will be used by the application.
+
+As opposed to <<Entities,entities>>, these are not expected to be often manipulated, even not at all.
+
+[#_geographicalarea]
+=== GeographicalArea
+
+Geographical areas are all the recognized ones that can appear on a registration plate.
+
+_Their values are enumerated link:ENUMS.adoc#_geographical_areas[here]._
+
+[cols="8,1,1,1"]
+|===
+|Field|Type|Cardinality|Unique
+
+|code
+|String
+|1..1
+|true
+
+|label
+|String
+|1..1
+|true
+|===
+
+[#_energysource]
+=== EnergySource
+
+Energy sources are all the ones a <<Car,car>> can use.
+
+_Their values are enumerated link:ENUMS.adoc#_energy_sources[here]._
+
+[cols="8,1,1,1"]
+|===
+|Field|Type|Cardinality|Unique
+
+|code
+|String
+|1..1
+|true
+
+|label
+|String
+|1..1
+|true
+|===
+
+[#_interventionstatus]
+=== InterventionStatus
+
+Intervention statuses are the enumeration of all the different statuses an <<Intervention,intervention>> can be in.
+
+They can be linked to other statuses to from a sort of workflow.
+
+_Their values are enumerated link:ENUMS.adoc#_intervention_statuses[here]._
+
+[cols="8,1,1,1"]
+|===
+|Field|Type|Cardinality|Unique
+
+|code
+|String
+|1..1
+|true
+
+|label
+|String
+|1..1
+|true
+
+|nextStatuses
+|<<InterventionStatus>>
+|0..n
+|
+|===
+
+=== StepType
+
+Step types are predefined types a <<Step,step>> can have, however the user can still declare a <<Step,step>> with a type
+the is not defined in this list.
+
+They will be manageable by the user via the UI.
+
+[cols="8,1,1,1"]
+|===
+|Field|Type|Cardinality|Unique
+
+|label
+|String
+|1..1
+|true
+|===
