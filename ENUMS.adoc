@@ -681,28 +681,35 @@ _See the type description link:TYPES.adoc#_energysource[here]._
 
 _See the type description link:TYPES.adoc#_interventionstatus[here]._
 
-[cols="1,10"]
+[cols="1,10,5"]
 |===
-|Code|Label
+|Code|Label|Next statuses
 
 |todo
 |À faire
+|{diagnostic, order, ready, onHold}
 
 |diagnostic
 |Diagnostic
+|{order, ready, onHold}
 
 |order
 |Commande
+|{ready, onHold}
 
 |ready
 |Prêt
+|{inProgress, onHold}
 
 |inProgress
 |En cours
+|{done, onHold}
 
 |done
 |Effectué
+|
 
 |onHold
 |En attente
+|{todo,ready,inProgress}
 |===

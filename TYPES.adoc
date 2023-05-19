@@ -447,8 +447,7 @@ _Their values are enumerated link:ENUMS.adoc#_energy_sources[here]._
 
 Intervention statuses are the enumeration of all the different statuses an <<Intervention,intervention>> can be in.
 
-They are not linked one to another as there is no clear workflow they have to follow; indeed, the user might decide to
-rollback or ignore some of them anytime.
+They can be linked to other statuses to from a sort of workflow.
 
 _Their values are enumerated link:ENUMS.adoc#_intervention_statuses[here]._
 
@@ -465,6 +464,11 @@ _Their values are enumerated link:ENUMS.adoc#_intervention_statuses[here]._
 |String
 |1..1
 |true
+
+|nextStatuses
+|<<InterventionStatus>>
+|0..n
+|
 |===
 
 === StepType
