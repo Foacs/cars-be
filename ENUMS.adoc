@@ -1,7 +1,5 @@
 = Enumerations
-:toc: macro
-
-toc::[]
+:toc:
 
 This document describes the different enumerations used in the application.
 

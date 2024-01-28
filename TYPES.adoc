@@ -1,7 +1,5 @@
 = Types
-:toc: macro
-
-toc::[]
+:toc:
 
 == Entities
 
@@ -10,6 +8,11 @@ This section describes the different kinds of entities will be managed by the ap
 *_Note:_* _In the following sections, a field in italic means it is a reference to a parent entity hence, it has no
 label._
 
+*_Note 2:_* _All files referred to in the following sections contain a name in their metadata._
+
+*_Note 3:_* _The technical IDs are omitted._
+
+[#_car]
 === Car
 
 This is the representation of a car; the entry point entity of the application.
@@ -136,6 +139,38 @@ Identified by its registration number, it can have an avatar and <<Intervention,
 ^1^ _The registration zone and number should define a composite unique key; a registration number needs only to be
 unique per geographical area._
 
+[discrete]
+====== JSON representation:
+
+[source,json]
+-----
+{
+  "registrationZone": "GeographicalArea",
+  "registrationNumber": "String",
+  "serialNumber": "String",
+  "owner": "String",
+  "brand": "String",
+  "model": "String",
+  "motorization": "String",
+  "energySources": [
+    "EnergySource"
+  ],
+  "engineCode": "String",
+  "releaseDate": "Date",
+  "lastControlDate": "Date",
+  "comments": "String",
+  "certificate": "File",
+  "avatar": "File",
+  "pictures": [
+    "File"
+  ],
+  "interventions": [
+    "Intervention"
+  ]
+}
+-----
+
+[#_intervention]
 === Intervention
 
 An intervention is an operation that needs to be done on a <<Car,car>>; it is billable, and might have a target date.
@@ -216,9 +251,23 @@ It is described by a title and a <<InterventionStatus,status>>, and is composed 
 |
 |
 
+|pictures
+|Images
+|File
+|0..n
+|
+|
+
 |tasks
 |Tâches
 |<<Task>>
+|0..n
+|
+|
+
+|parts
+|Pièces
+|<<OrderPart>>
 |0..n
 |
 |
@@ -231,6 +280,36 @@ It is described by a title and a <<InterventionStatus,status>>, and is composed 
 |
 |===
 
+[discrete]
+====== JSON representation:
+
+[source,json]
+-----
+{
+  "title": "String",
+  "status": "InterventionStatus",
+  "targetDate": "Date",
+  "mileage": "Decimal",
+  "estimatedTime": "Decimal",
+  "consumedTime": "Decimal",
+  "paidAmount": "Decimal",
+  "laborCost": "Decimal",
+  "discount": "Decimal",
+  "comments": "String",
+  "pictures":  [
+    "File"
+  ],
+  "tasks": [
+    "Task"
+  ],
+  "parts": [
+    "OrderPart"
+  ],
+  "carId": "Integer"
+}
+-----
+
+[#_task]
 === Task
 
 A task is (as its name stands) a task to be done as part of an <<Intervention,intervention>>.
@@ -250,7 +329,7 @@ It is only described by a title and is composed of multiple <<Step,steps>>.
 
 |steps
 |Étapes
-|<<Task>>
+|<<Step>>
 |0..n
 |
 |
@@ -263,6 +342,21 @@ It is only described by a title and is composed of multiple <<Step,steps>>.
 |
 |===
 
+[discrete]
+====== JSON representation:
+
+[source,json]
+-----
+{
+  "title": "String",
+  "steps": [
+    "Step"
+  ],
+  "interventionId": "Integer"
+}
+-----
+
+[#_step]
 === Step
 
 A step is (as its name stands) a step to be done as part of a <<Task,task>>.
@@ -302,6 +396,20 @@ It is only described by a <<StepType,type>> and a description, and has a simple 
 |
 |===
 
+[discrete]
+====== JSON representation:
+
+[source,json]
+-----
+{
+  "type": "String",
+  "description": "String",
+  "done": "Boolean",
+  "taskId": "Integer"
+}
+-----
+
+[#_order]
 === Order
 
 An order is the representation of an order the user has issued to a supplier, which needs to be traced in order to bill
@@ -350,9 +458,28 @@ It is described by a reference, an issue date and a supplier, can have multiple 
 |
 |===
 
+[discrete]
+====== JSON representation:
+
+[source,json]
+-----
+{
+  "reference": "String",
+  "issueDate": "Date",
+  "supplier": "Boolean",
+  "files": [
+    "File"
+  ],
+  "parts": [
+    "OrderPart"
+  ]
+}
+-----
+
+[#_orderpart]
 === OrderPart
 
-An order part is a part of an <<Order,order>> that needs to be linked to an <<Intervention,intervention>>.
+An order part is a part of an <<Order,order>> that can be linked to an <<Intervention,intervention>>.
 
 Is it described by a designation, a price and whether the part has been received or not.
 
@@ -384,13 +511,34 @@ order to bill the client.
 |
 |0
 
-|_intervention_
+|_order_
 |
-|_<<Intervention>>_
+|_<<Order>>_
 |_1..1_
 |
 |
+
+|_intervention_
+|
+|_<<Intervention>>_
+|_0..1_
+|
+|
 |===
+
+[discrete]
+====== JSON representation:
+
+[source,json]
+-----
+{
+  "designation": "String",
+  "price": "Decimal",
+  "received": "Boolean",
+  "orderId": "Integer",
+  "interventionId": "Integer"
+}
+-----
 
 == Codifications
 
@@ -420,6 +568,17 @@ _Their values are enumerated link:ENUMS.adoc#_geographical_areas[here]._
 |true
 |===
 
+[discrete]
+====== JSON representation:
+
+[source,json]
+-----
+{
+  "code": "String",
+  "label": "String"
+}
+-----
+
 [#_energysource]
 === EnergySource
 
@@ -441,6 +600,17 @@ _Their values are enumerated link:ENUMS.adoc#_energy_sources[here]._
 |1..1
 |true
 |===
+
+[discrete]
+====== JSON representation:
+
+[source,json]
+-----
+{
+  "code": "String",
+  "label": "String"
+}
+-----
 
 [#_interventionstatus]
 === InterventionStatus
@@ -471,6 +641,20 @@ _Their values are enumerated link:ENUMS.adoc#_intervention_statuses[here]._
 |
 |===
 
+[discrete]
+====== JSON representation:
+
+[source,json]
+-----
+{
+  "code": "String",
+  "label": "String",
+  "nextStatuses": [
+    "String"
+  ]
+}
+-----
+
 === StepType
 
 Step types are predefined types a <<Step,step>> can have, however the user can still declare a <<Step,step>> with a type
@@ -487,3 +671,13 @@ They will be manageable by the user via the UI.
 |1..1
 |true
 |===
+
+[discrete]
+====== JSON representation:
+
+[source,json]
+-----
+{
+  "label": "String"
+}
+-----
